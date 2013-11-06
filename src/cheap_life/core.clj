@@ -18,17 +18,19 @@
 (defn get-gas [country year]
   "Returns the pump price for gasoline (US$ per liter) 
 	in a country for a specified year"
-  (get-api (str "/countries"
+  (get-in (last
+            (get-api (str "/countries"
                 "/" country
-		"/indicators"
-		"/EP.PMP.SGAS.CD"
-		"?date=" year)))
+		        "/indicators"
+		        "/EP.PMP.SGAS.CD"
+		        "?date=" year)))
+            [0 :value] ))
                 
 
 
 (defn -main
     "Prints the price of gasoline in Uruguay."
     [& args]
-    (println (get-in (get-gas "UY" "2012") [] )))
+    (println (str "Price of gas in Uruguay: " (get-gas "UY" "2012"))))
                  
                   
