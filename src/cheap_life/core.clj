@@ -14,7 +14,7 @@
   "Returns json object representing API response"
   (let 
     [base_path (str BASE_URI path)
-     query-params (merge qp {:format "json"})]
+     query-params (merge qp {:format "json" :per_page 10000})]
     (parse-json (:body 
                   (client/get base_path {:query-params query-params})))))
 
