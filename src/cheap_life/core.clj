@@ -22,10 +22,18 @@
   "Returns single value from API response"
   (get-in (last (get-api path query-params)) [0 key]))
 
+(defn get-value-list [path query-params key]
+  "Returns list of values for a key from API response"
+  ;TODO: handle paging
+  (map key (last (get-api path query-params))))
+
 (defn get-value-map [path query-params]
   "Returns map of values from API response"
   ;TODO: handle paging
   (last (get-api path query-params)))
+
+(defn get-indicator-list []
+  (get-value-list "/indicators" {} :id))
 
 (defn get-indicator-all [indicator year key]
   "Returns indicator for a specified year for all countries"
@@ -69,6 +77,7 @@
     (println (str "2012 price of gas in United States: " (get-gas "US" "2012")))
     (println (str "2012 GDP for Uruguay: " (get-gdp "UY" "2012")))
     (println (str "2012 GDP United States: " (get-gdp "US" "2012")))
-    (println (apply str "2012 GDP all countries: " (get-gdp-all "2012"))))
+    (println (apply str "2012 GDP all countries: " (get-gdp-all "2012")))
+    (println (apply str "All indicators: " (get-indicator-list))))
                  
                   
