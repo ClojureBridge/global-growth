@@ -7,7 +7,8 @@
                  [clj-http "0.7.7"]
                  [cheshire "5.2.0"]
                  [ring "1.2.1"]
-                 [compojure "1.1.6"]]
+                 [compojure "1.1.6"]
+                 [hiccup "1.0.4"]]
   :main ^:skip-aot cheap-life.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

@@ -1,8 +1,11 @@
 (ns cheap-life.core
-  (:use compojure.core)
+  (:use [compojure.core]
+        [ring.middleware.params])
   (:require [clj-http.client :as client]
             [cheshire.core :as json]
-            [ring.adapter.jetty :as jetty]))
+            [ring.adapter.jetty :as jetty]
+            [hiccup.core :as hiccup]
+            [hiccup.form :as f]))
             
 
 ;; CONSTANTS
@@ -83,11 +86,37 @@
 ;(println (apply str "2012 GDP all countries: " (get-gdp-all "2012")))
 ;(println (apply str "All indicators: " (get-indicator-list))))
 
-(def main-routes
-  (GET "/" [] "This is the cheap-life web app."))
+(defn layout 
+  [title & content]
+  (hiccup/html
+    [:head [:title title]]
+    [:body content]))
+
+(defn view-ind
+  [indicator]
+  (layout "Indicator Chosen"
+          [:h1 "Indicator Chosen"]
+          [:p indicator]))
+
+
+(defn main-page []
+  (layout "Cheap Life"
+          [:h1 "Cheap Life"]
+          [:p "This is the cheap-life web app."]
+          (f/form-to [:post "/choose-ind" ]
+                     (f/label "indicator" "Indicators")
+                     (f/drop-down "indicator" (vals (get-indicator-list)))
+                     (f/submit-button "Submit"))))
+
+(defroutes main-routes 
+  (GET "/" [] (main-page))
+  (POST "/choose-ind" [indicator]
+        (view-ind indicator)))
+            
+        
 
 (defn -main
     [& args]
-  (jetty/run-jetty main-routes
+  (jetty/run-jetty (wrap-params main-routes)
                    {:port 5000}))
                  
