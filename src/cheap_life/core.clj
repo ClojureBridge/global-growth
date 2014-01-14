@@ -1,6 +1,9 @@
 (ns cheap-life.core
-  (:require [clj-http.client :as client])
-  (:require [cheshire.core :as json]))
+  (:use compojure.core)
+  (:require [clj-http.client :as client]
+            [cheshire.core :as json]
+            [ring.adapter.jetty :as jetty]))
+            
 
 ;; CONSTANTS
 (def BASE_URI "http://api.worldbank.org")
@@ -22,10 +25,14 @@
   "Returns single value from API response"
   (get-in (last (get-api path query-params)) [0 key]))
 
-(defn get-value-list [path query-params key]
+(defn get-value-list [path query-params key1 key2]
   "Returns list of values for a key from API response"
   ;TODO: handle paging
-  (map key (last (get-api path query-params))))
+  (let 
+    [result (get-api path query-params)]
+    (zipmap 
+      (map key1 (last result))
+      (map key2 (last result)))))
 
 (defn get-value-map [path query-params]
   "Returns map of values from API response"
@@ -33,7 +40,7 @@
   (last (get-api path query-params)))
 
 (defn get-indicator-list []
-  (get-value-list "/indicators" {} :id))
+  (get-value-list "/indicators" {} :id :name))
 
 (defn get-indicator-all [indicator year key]
   "Returns indicator for a specified year for all countries"
@@ -69,15 +76,18 @@
   [year]
   (get-indicator-all GDP_INDICATOR year :value))
 
+;(println (str "2012 price of gas in Uruguay: " (get-gas "UY" "2012")))
+;(println (str "2012 price of gas in United States: " (get-gas "US" "2012")))
+;(println (str "2012 GDP for Uruguay: " (get-gdp "UY" "2012")))
+;(println (str "2012 GDP United States: " (get-gdp "US" "2012")))
+;(println (apply str "2012 GDP all countries: " (get-gdp-all "2012")))
+;(println (apply str "All indicators: " (get-indicator-list))))
+
+(def main-routes
+  (GET "/" [] "This is the cheap-life web app."))
 
 (defn -main
-    "Prints the price of gasoline in Uruguay."
     [& args]
-    (println (str "2012 price of gas in Uruguay: " (get-gas "UY" "2012")))
-    (println (str "2012 price of gas in United States: " (get-gas "US" "2012")))
-    (println (str "2012 GDP for Uruguay: " (get-gdp "UY" "2012")))
-    (println (str "2012 GDP United States: " (get-gdp "US" "2012")))
-    (println (apply str "2012 GDP all countries: " (get-gdp-all "2012")))
-    (println (apply str "All indicators: " (get-indicator-list))))
+  (jetty/run-jetty main-routes
+                   {:port 5000}))
                  
-                  

@@ -5,7 +5,10 @@ A Clojure API wrapper for the World Bank's [API](http://data.worldbank.org/)
 
 ## Usage
 
-FIXME
+Run with:
+  lein run
+
+Then visit [localhost:5000](http://localhost:5000).
 
 ## License
 

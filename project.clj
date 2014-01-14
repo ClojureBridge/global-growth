@@ -4,8 +4,10 @@
   :license {:name "Creative Commons Attribution License"
             :url "http://creativecommons.org/licenses/by/3.0/"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-		 [clj-http "0.7.7"]
-                 [cheshire "5.2.0"]]
+                 [clj-http "0.7.7"]
+                 [cheshire "5.2.0"]
+                 [ring "1.2.1"]
+                 [compojure "1.1.6"]]
   :main ^:skip-aot cheap-life.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
