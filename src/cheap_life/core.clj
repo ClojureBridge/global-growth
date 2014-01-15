@@ -33,7 +33,7 @@
   ;TODO: handle paging
   (let 
     [result (get-api path query-params)]
-    (zipmap 
+    (map vector
       (map key1 (last result))
       (map key2 (last result)))))
 
@@ -43,7 +43,7 @@
   (last (get-api path query-params)))
 
 (defn get-indicator-list []
-  (get-value-list "/indicators" {} :id :name))
+  (get-value-list "/indicators" {} :name :id))
 
 (defn get-indicator-all [indicator year key]
   "Returns indicator for a specified year for all countries"
@@ -85,6 +85,7 @@
 ;(println (str "2012 GDP United States: " (get-gdp "US" "2012")))
 ;(println (apply str "2012 GDP all countries: " (get-gdp-all "2012")))
 ;(println (apply str "All indicators: " (get-indicator-list))))
+;(get-indicator-list)
 
 (defn layout 
   [title & content]
@@ -100,19 +101,18 @@
 
 
 (defn main-page []
-  (layout "Cheap Life"
-          [:h1 "Cheap Life"]
-          [:p "This is the cheap-life web app."]
+  (layout "World Bank Indicators"
+          [:h1 "World Bank Indicators"]
+          [:p "Choose one of these world development indicators."]
           (f/form-to [:post "/choose-ind" ]
-                     (f/label "indicator" "Indicators")
-                     (f/drop-down "indicator" (vals (get-indicator-list)))
+                     (f/label "indicator" "Indicators: ")
+                     (f/drop-down "indicator" (get-indicator-list))[:br][:br] 
                      (f/submit-button "Submit"))))
 
 (defroutes main-routes 
   (GET "/" [] (main-page))
   (POST "/choose-ind" [indicator]
         (view-ind indicator)))
-            
         
 
 (defn -main
