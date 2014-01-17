@@ -94,25 +94,31 @@
     [:body content]))
 
 (defn view-ind
-  [indicator]
-  (layout "Indicator Chosen"
-          [:h1 "Indicator Chosen"]
-          [:p indicator]))
+  [indicator1 indicator2]
+  (layout "Indicators Chosen"
+          [:h1 "Indicators Chosen"]
+          [:p indicator1]
+          [:p indicator2]))
 
 
 (defn main-page []
-  (layout "World Bank Indicators"
+  (let [indicators (get-indicator-list)]
+    (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
           [:p "Choose one of these world development indicators."]
           (f/form-to [:post "/choose-ind" ]
-                     (f/label "indicator" "Indicators: ")
-                     (f/drop-down "indicator" (get-indicator-list))[:br][:br] 
-                     (f/submit-button "Submit"))))
+                     (f/label "indicator1" "Indicator 1:  ")
+                     (f/drop-down "indicator1" indicators)
+                     [:br]
+                     (f/label "indicator2" "Indicator 2:  ")
+                     (f/drop-down "indicator2" indicators)
+                     [:br][:br] 
+                     (f/submit-button "Submit")))))
 
 (defroutes main-routes 
   (GET "/" [] (main-page))
-  (POST "/choose-ind" [indicator]
-        (view-ind indicator)))
+  (POST "/choose-ind" [indicator1 indicator2]
+        (view-ind indicator1 indicator2)))
         
 
 (defn -main
