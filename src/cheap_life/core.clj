@@ -6,7 +6,7 @@
             [ring.adapter.jetty :as jetty]
             [hiccup.core :as hiccup]
             [hiccup.form :as f]))
-            
+
 
 ;; CONSTANTS
 (def BASE_URI "http://api.worldbank.org")
