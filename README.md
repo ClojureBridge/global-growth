@@ -1,14 +1,14 @@
 # cheap-life 
 
-A Clojure API wrapper for the World Bank's [API](http://data.worldbank.org/)
+A Clojure web app to explore the World Bank's Indicators [API](http://data.worldbank.org/)
 
 
 ## Usage
 
 Run with:
-  lein run
+    lein ring server 
 
-Then visit [localhost:5000](http://localhost:5000).
+Then visit [localhost:3000](http://localhost:3000).
 
 ## License
 
