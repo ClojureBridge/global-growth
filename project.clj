@@ -11,6 +11,6 @@
                  [compojure "1.1.6"]
                  [hiccup "1.0.4"]]
   :main ^:skip-aot cheap-life.core
-  :ring {:handler cheap-life.core/main-routes}
+  :ring {:handler cheap-life.core/handler}
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

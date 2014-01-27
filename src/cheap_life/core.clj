@@ -7,6 +7,11 @@
             [hiccup.core :as hiccup]
             [hiccup.form :as f]))
 
+;TODO: handle paging: right now just getting a large value
+; for 'per_page' parameter. 
+; Maybe that is fine for simplicity. But that could be a 
+; problem if we get things with large result sets. Not
+; getting large results as of now.
 
 ;; CONSTANTS
 (def BASE-URI "http://api.worldbank.org")
@@ -31,32 +36,33 @@
   (get-in (last (get-api path query-params)) [0 key]))
 
 (defn get-value-list 
-  "Returns list of values for a key from API response"
+  "Returns relation of two keys from API response"
   [path query-params key1 key2]
-  ;TODO: handle paging
   (let 
     [result (get-api path query-params)]
     (map vector
       (map key1 (last result))
       (map key2 (last result)))))
 
-(defn get-value-map 
-  "Returns map of values from API response"
-  [path query-params]
-  ;TODO: handle paging
-  (last (get-api path query-params)))
 
 (defn get-indicator-list []
-  (get-value-list "/indicators" {} :name :id))
+  "Gets list of indicators. 
+  /topics/16/indicators: All urban development
+  --- Other possibilities ---
+  /indicators: All Indicators (about 8800)
+  /sources/2/indicators: All world development indicators (about 1300)"
+  (get-value-list "/topics/16/indicators" {} :name :id))
 
 (defn get-indicator-all 
   "Returns indicator for a specified year for all countries"
-  [indicator year key]
-  (get-value-map (str "/countries"
+  [indicator year key1 key2]
+  (get-value-list (str "/countries"
                       "/all"
                       "/indicators"
                       "/" indicator)
-                 {:date year}))
+                 {:date (str year)}
+                  key1
+                  key2))
 
 (defn get-indicator 
   "Returns indicator for a country for a specified year"
@@ -68,6 +74,17 @@
              {:date year}
              key ))
 
+(defn sorted-indicator-map
+  "Sort the map of indicator numeric values"
+  [inds]
+  (sort-by val >
+           (into {} (for [[k v] inds 
+                          :when (not (nil? v))] 
+                      [(:value k) (read-string v)]))))
+
+
+; These are examples. May want to take these out unless
+; they serve as useful examples for learning.
 (defn get-gas 
   "Returns the pump price for gasoline (US$ per liter) 
 	in a country for a specified year"
@@ -86,14 +103,8 @@
   [year]
   (get-indicator-all GDP-INDICATOR year :value))
 
-;(println (str "2012 price of gas in Uruguay: " (get-gas "UY" "2012")))
-;(println (str "2012 price of gas in United States: " (get-gas "US" "2012")))
-;(println (str "2012 GDP for Uruguay: " (get-gdp "UY" "2012")))
-;(println (str "2012 GDP United States: " (get-gdp "US" "2012")))
-;(println (apply str "2012 GDP all countries: " (get-gdp-all "2012")))
-;(println (apply str "All indicators: " (get-indicator-list))))
-;(get-indicator-list)
 
+;; WEB APP
 (defn layout 
   [title & content]
   (hiccup/html
@@ -101,13 +112,24 @@
     [:body content]))
 
 (defn view-ind
-  [indicator1 indicator2]
-  (layout "Indicators Chosen"
-          [:h1 "Indicators Chosen"]
-          [:p indicator1]
-          [:p indicator2]))
-
-
+  [indicator1 indicator2 year]
+  (let [inds1 (sorted-indicator-map 
+                (get-indicator-all indicator1 year :country :value))
+        inds2 (sorted-indicator-map 
+                (get-indicator-all indicator2 year :country :value))]
+  (layout "Sorted Indicators"
+          [:h1 "Sorted Indicators"]
+          [:div
+           [:div
+            (f/label indicator1 indicator1)[:br]
+            (f/drop-down {:size 10} indicator1 inds1)]
+           [:div
+            (f/label indicator2 indicator2)[:br]
+            (f/drop-down {:size 10} indicator2 inds2)]])))
+           
+(sorted-indicator-map 
+                (get-indicator-all GAS-INDICATOR "2012" :country :value))
+                       
 (defn main-page []
   (let [indicators (get-indicator-list)]
     (layout "World Bank Indicators"
@@ -119,17 +141,16 @@
                      [:br]
                      (f/label "indicator2" "Indicator 2:  ")
                      (f/drop-down "indicator2" indicators)
+                     [:br][:br]
+                     (f/label "year" "Year: ")
+                     (f/drop-down "year" (reverse (range 1960 2013)))
                      [:br][:br] 
                      (f/submit-button "Submit")))))
 
 (defroutes main-routes 
   (GET "/" [] (main-page))
-  (POST "/choose-ind" [indicator1 indicator2]
-        (view-ind indicator1 indicator2)))
+  (POST "/choose-ind" [indicator1 indicator2 year]
+        (view-ind indicator1 indicator2 year)))
         
+(def handler (wrap-params main-routes))
 
-(defn -main
-    [& args]
-  (jetty/run-jetty (wrap-params main-routes)
-                   {:port 5000}))
-                 
