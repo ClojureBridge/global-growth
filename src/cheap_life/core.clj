@@ -1,7 +1,8 @@
 (ns cheap-life.core
   (:use [compojure.core]
         [ring.middleware.params])
-  (:require [clj-http.client :as client]
+  (:require [clojure.set :as set]
+            [clj-http.client :as client]
             [cheshire.core :as json]
             [ring.adapter.jetty :as jetty]
             [hiccup.core :as hiccup]
@@ -21,6 +22,7 @@
 (defn parse-json [str]
   (json/parse-string str true))
 
+;; WORLD BANK API CALLS
 (defn get-api 
   "Returns json object representing API response"
   [path qp]
@@ -35,28 +37,30 @@
   [path query-params key]
   (get-in (last (get-api path query-params)) [0 key]))
 
-(defn get-value-list 
+(defn get-value-map
   "Returns relation of two keys from API response"
   [path query-params key1 key2]
   (let 
     [result (get-api path query-params)]
-    (map vector
+    ;FIX THIS
+    (zipmap
       (map key1 (last result))
       (map key2 (last result)))))
 
-
-(defn get-indicator-list []
-  "Gets list of indicators. 
+(defn get-indicator-map []
+  "Gets map of indicators. 
   /topics/16/indicators: All urban development
   --- Other possibilities ---
   /indicators: All Indicators (about 8800)
   /sources/2/indicators: All world development indicators (about 1300)"
-  (get-value-list "/topics/16/indicators" {} :name :id))
+  (get-value-map "/topics/16/indicators" {} :name :id))
+
+(def indicator-map (get-indicator-map))
 
 (defn get-indicator-all 
   "Returns indicator for a specified year for all countries"
   [indicator year key1 key2]
-  (get-value-list (str "/countries"
+  (get-value-map (str "/countries"
                       "/all"
                       "/indicators"
                       "/" indicator)
@@ -121,31 +125,27 @@
           [:h1 "Sorted Indicators"]
           [:div
            [:div
-            (f/label indicator1 indicator1)[:br]
+            (f/label indicator1 (get (set/map-invert indicator-map) indicator1))[:br]
             (f/drop-down {:size 10} indicator1 inds1)]
            [:div
-            (f/label indicator2 indicator2)[:br]
+            (f/label indicator2 (get (set/map-invert indicator-map) indicator2))[:br]
             (f/drop-down {:size 10} indicator2 inds2)]])))
-           
-(sorted-indicator-map 
-                (get-indicator-all GAS-INDICATOR "2012" :country :value))
-                       
+
 (defn main-page []
-  (let [indicators (get-indicator-list)]
-    (layout "World Bank Indicators"
+  (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
           [:p "Choose one of these world development indicators."]
           (f/form-to [:post "/choose-ind" ]
                      (f/label "indicator1" "Indicator 1:  ")
-                     (f/drop-down "indicator1" indicators)
+                     (f/drop-down "indicator1" (seq indicator-map))
                      [:br]
                      (f/label "indicator2" "Indicator 2:  ")
-                     (f/drop-down "indicator2" indicators)
+                     (f/drop-down "indicator2" (seq indicator-map))
                      [:br][:br]
                      (f/label "year" "Year: ")
                      (f/drop-down "year" (reverse (range 1960 2013)))
                      [:br][:br] 
-                     (f/submit-button "Submit")))))
+                     (f/submit-button "Submit"))))
 
 (defroutes main-routes 
   (GET "/" [] (main-page))
