@@ -42,9 +42,7 @@
   [path query-params key1 key2]
   (let
     [result (get-api path query-params)]
-    (zipmap
-      (map key1 (last result))
-      (map key2 (last result)))))
+    (into {} (map (fn[x] {(key1 x) (key2 x)}) (last result)))))
 
 (defn get-indicator-map []
   "Gets map of indicators.
