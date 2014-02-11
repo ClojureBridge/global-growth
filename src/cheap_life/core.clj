@@ -46,11 +46,11 @@
 
 (defn get-indicator-map []
   "Gets map of indicators.
-  /topics/16/indicators:   All urban development
+  /sources/2/indicators:   All world development indicators (about 1300)
   --- Other possibilities ---
-  /indicators:             All Indicators (about 8800)
-  /sources/2/indicators:   All world development indicators (about 1300)"
-  (get-value-map "/topics/16/indicators" {} :name :id))
+  /topics/16/indicators:   All urban development
+  /indicators:             All Indicators (about 8800)"
+  (get-value-map "/sources/2/indicators" {} :name :id))
 
 (def indicator-map (get-indicator-map))
 
