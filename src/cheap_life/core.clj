@@ -120,6 +120,20 @@
     [:div.container
      content]]))
 
+(defn ordered-list
+  [coll]
+  [:ol
+   (map (fn [list-item] [:li list-item]) coll)])
+
+(defn indicator-list
+  [indicators]
+  (ordered-list
+   (take 10
+         (map (fn [country-pair]
+                (let [country (first country-pair)
+                      value (second country-pair)]
+                  (str country " (" value ")"))) indicators))))
+
 (defn view-ind
   [indicator1 indicator2 year]
   (let [inds1 (sorted-indicator-map
