@@ -2,10 +2,12 @@
   (:use [compojure.core]
         [ring.middleware.params])
   (:require [clojure.set :as set]
+            [clojure.pprint :as pp]
             [clj-http.client :as client]
             [cheshire.core :as json]
             [ring.adapter.jetty :as jetty]
             [hiccup.core :as hiccup]
+            [hiccup.page :as page]
             [hiccup.form :as f]))
 
 ;TODO: handle paging: right now just getting a large value
@@ -108,9 +110,15 @@
 ;; WEB APP
 (defn layout
   [title & content]
-  (hiccup/html
-    [:head [:title title]]
-    [:body content]))
+  (page/html5
+   [:head
+    [:title title]
+    (page/include-css "//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css")
+    (page/include-css "//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css")
+    [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]]
+   [:body
+    [:div.container
+     content]]))
 
 (defn view-ind
   [indicator1 indicator2 year]
@@ -135,16 +143,17 @@
   (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
           [:p "Choose one of these world development indicators."]
-          (f/form-to [:post "/choose-ind" ]
-                     (f/label "indicator1" "Indicator 1:  ")
-                     (f/drop-down "indicator1" (seq indicator-map))
-                     [:br]
-                     (f/label "indicator2" "Indicator 2:  ")
-                     (f/drop-down "indicator2" (seq indicator-map))
-                     [:br][:br]
-                     (f/label "year" "Year: ")
-                     (f/drop-down "year" (reverse (range 1960 2013)))
-                     [:br][:br]
+          (f/form-to {:role "form"} [:post "/choose-ind"]
+                     [:div.row
+                      [:div.form-group.col-md-5
+                       (f/label "indicator1" "Indicator 1:  ")
+                       (f/drop-down {:class "form-control"} "indicator1" (seq indicator-map))]
+                      [:div.form-group.col-md-5
+                       (f/label "indicator2" "Indicator 2:  ")
+                       (f/drop-down {:class "form-control"} "indicator2" (seq indicator-map))]
+                      [:div.form-group.col-md-2
+                       (f/label "year" "Year: ")
+                       (f/drop-down {:class "form-control"} "year" (reverse (range 1960 2013)))]]
                      (f/submit-button "Submit"))))
 
 (defroutes main-routes
