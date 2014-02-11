@@ -129,21 +129,23 @@
   (layout "Sorted Indicators"
           [:h1 "Sorted Indicators"]
           [:div.row
-           [:div.form-group.col-md-5
-            (f/label indicator1 (get (set/map-invert indicator-map) indicator1))[:br]
+           [:div.form-group.col-md-6
+            (f/label indicator1 (get (set/map-invert indicator-map) indicator1))
             (if (empty? inds1)
               [:p "No indicator values for this year."]
-              (f/drop-down {:class "form-control" :size 10} indicator1 inds1))
+              (indicator-list inds1))
             ]
-           [:div.form-group.col-md-5
-            (f/label indicator2 (get (set/map-invert indicator-map) indicator2))[:br]
-            (f/drop-down {:class "form-control" :size 10} indicator2 inds2)]])))
+           [:div.form-group.col-md-6
+            (f/label indicator2 (get (set/map-invert indicator-map) indicator2))
+            (if (empty? inds2)
+              [:p "No indicator values for this year."]
+              (indicator-list inds2))]])))
 
 (defn main-page []
   (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
           [:p "Choose one of these world development indicators."]
-          (f/form-to {:role "form"} [:post "/choose-ind"]
+          (f/form-to {:role "form"} [:get "/choose-ind"]
                      [:div.row
                       [:div.form-group.col-md-5
                        (f/label "indicator1" "Indicator 1:  ")
@@ -158,7 +160,7 @@
 
 (defroutes main-routes
   (GET "/" [] (main-page))
-  (POST "/choose-ind" [indicator1 indicator2 year]
+  (GET "/choose-ind" [indicator1 indicator2 year]
         (view-ind indicator1 indicator2 year)))
 
 (def handler (wrap-params main-routes))
