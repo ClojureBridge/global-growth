@@ -128,16 +128,16 @@
                 (get-indicator-all indicator2 year :country :value))]
   (layout "Sorted Indicators"
           [:h1 "Sorted Indicators"]
-          [:div
-           [:div
+          [:div.row
+           [:div.form-group.col-md-5
             (f/label indicator1 (get (set/map-invert indicator-map) indicator1))[:br]
             (if (empty? inds1)
               [:p "No indicator values for this year."]
-              (f/drop-down {:size 10} indicator1 inds1))
+              (f/drop-down {:class "form-control" :size 10} indicator1 inds1))
             ]
-           [:div
+           [:div.form-group.col-md-5
             (f/label indicator2 (get (set/map-invert indicator-map) indicator2))[:br]
-            (f/drop-down {:size 10} indicator2 inds2)]])))
+            (f/drop-down {:class "form-control" :size 10} indicator2 inds2)]])))
 
 (defn main-page []
   (layout "World Bank Indicators"
