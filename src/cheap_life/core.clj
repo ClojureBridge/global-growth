@@ -125,6 +125,12 @@
   [:ol
    (map (fn [list-item] [:li list-item]) coll)])
 
+(defn format-indicator-value
+  [value]
+  (if (float? value)
+    (format "%,.2f" value)
+    (str value)))
+
 (defn indicator-list
   [indicators]
   (ordered-list
@@ -132,7 +138,7 @@
          (map (fn [country-pair]
                 (let [country (first country-pair)
                       value (second country-pair)]
-                  (str country " (" value ")"))) indicators))))
+                  (str country " (" (format-indicator-value value) ")"))) indicators))))
 
 (defn view-ind
   [indicator1 indicator2 year]
