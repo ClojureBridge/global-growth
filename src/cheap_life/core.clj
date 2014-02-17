@@ -117,6 +117,10 @@
     (page/include-css "//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css")
     [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]]
    [:body
+    [:nav.navbar.navbar-default {:role "navigation"}
+     [:div.container-fluid
+      [:div.navbar-header
+       [:a.navbar-brand {:href "/"} "World Bank Indicators"]]]]
     [:div.container
      content]]))
 
