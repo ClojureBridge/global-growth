@@ -18,33 +18,33 @@
 
 ;; CONSTANTS
 (def BASE-URI "http://api.worldbank.org")
-(def GAS-INDICATOR "EP.PMP.SGAS.CD")
-(def GDP-INDICATOR "NY.GDP.PCAP.CD")
+(def LIST-SIZE 10)
 
 (defn parse-json [str]
   (json/parse-string str true))
 
 ;; WORLD BANK API CALLS
 (defn get-api
-  "Returns json object representing API response"
+  "Returns json object representing API response."
   [path qp]
-  (let
-    [base-path (str BASE-URI path)
-     query-params (merge qp {:format "json" :per_page 10000})]
-    (parse-json (:body
-                  (client/get base-path {:query-params query-params})))))
+  (let [base-path (str BASE-URI path)
+        query-params (merge qp {:format "json" :per_page 10000})
+        response (parse-json (:body (client/get base-path {:query-params query-params})))
+        metadata (first response)
+        results (second response)]
+    {:metadata metadata
+     :results results}))
 
 (defn get-value
   "Returns single value from API response"
   [path query-params key]
-  (get-in (last (get-api path query-params)) [0 key]))
+  (get-in (:results (get-api path query-params)) [0 key]))
 
 (defn get-value-map
   "Returns relation of two keys from API response"
   [path query-params key1 key2]
-  (let
-    [result (get-api path query-params)]
-    (into {} (map (fn[x] {(key1 x) (key2 x)}) (last result)))))
+  (let [response (get-api path query-params)]
+    (into {} (map (fn [x] {(key1 x) (key2 x)}) (:results response)))))
 
 (defn get-indicator-map []
   "Gets map of indicators.
@@ -54,7 +54,20 @@
   /indicators:             All Indicators (about 8800)"
   (get-value-map "/sources/2/indicators" {} :name :id))
 
+(defn remove-aggregate-countries
+  "Remove all countries that aren't actually countries, but are aggregates."
+  [countries]
+  (remove (fn [country]
+            (= (get-in country [:region :value]) "Aggregates")) countries))
+
+(defn get-country-ids
+  "Get set of country ids so we can filter out aggregate values."
+  []
+  (let [countries (remove-aggregate-countries (:results (get-api "/countries" {})))]
+    (set (map :iso2Code countries))))
+
 (def indicator-map (get-indicator-map))
+(def country-ids (get-country-ids))
 
 (defn get-indicator-all
   "Returns indicator for a specified year for all countries"
@@ -67,47 +80,18 @@
                   key1
                   key2))
 
-(defn get-indicator
-  "Returns indicator for a country for a specified year"
-  [indicator country year key]
-  (get-value (str "/countries"
-                  "/" country
-                  "/indicators"
-                  "/" indicator)
-             {:date year}
-             key ))
-
 (defn sorted-indicator-map
   "Sort the map of indicator numeric values"
   [inds]
-  (sort-by val >
-           (into {} (for [[k v] inds
-                          :when (not (nil? v))]
-                      [(:value k) (read-string v)]))))
-
-
-; These are examples. May want to take these out unless
-; they serve as useful examples for learning.
-(defn get-gas
-  "Returns the pump price for gasoline (US$ per liter)
-	in a country for a specified year"
-  [country year]
-  (get-indicator GAS-INDICATOR country year :value))
-
-(defn get-gdp
-  "Returns the GDP per capita (current US$)
-        in a country for a specified year"
-  [country year]
-  (get-indicator GDP-INDICATOR country year :value))
-
-(defn get-gdp-all
-  "Returns the GDP per capita (current US$)
-        for a specified year for all countries"
-  [year]
-  (get-indicator-all GDP-INDICATOR year :value))
-
+  (take LIST-SIZE
+        (sort-by val >
+                 (into {} (for [[k v] inds
+                                :when (and (not (nil? v))
+                                           (contains? country-ids (:id k)))]
+                            [(:value k) (read-string v)])))))
 
 ;; WEB APP
+
 (defn layout
   [title & content]
   (page/html5
@@ -131,18 +115,17 @@
 
 (defn format-indicator-value
   [value]
-  (if (float? value)
-    (format "%,.2f" value)
+  (if (number? value)
+    (format "%,.2f" (float value))
     (str value)))
 
 (defn indicator-list
   [indicators]
   (ordered-list
-   (take 10
-         (map (fn [country-pair]
-                (let [country (first country-pair)
-                      value (second country-pair)]
-                  (str country " (" (format-indicator-value value) ")"))) indicators))))
+   (map (fn [country-pair]
+          (let [country (first country-pair)
+                value (second country-pair)]
+            (str country " (" (format-indicator-value value) ")"))) indicators)))
 
 (defn view-ind
   [indicator1 indicator2 year]
