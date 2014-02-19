@@ -1,4 +1,4 @@
-# cheap-life 
+# global-growth 
 
 A Clojure web app to explore the World Bank's Indicators [API](http://data.worldbank.org/)
 
