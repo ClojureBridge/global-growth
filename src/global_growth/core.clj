@@ -1,4 +1,4 @@
-(ns cheap-life.core
+(ns global-growth.core
   (:use [compojure.core]
         [ring.middleware.params])
   (:require [clojure.set :as set]

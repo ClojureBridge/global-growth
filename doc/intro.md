@@ -1,3 +1,3 @@
-# Introduction to cheap-life
+# Introduction to global-growth
 
 TODO: write [great documentation](http://jacobian.org/writing/great-documentation/what-to-write/)
