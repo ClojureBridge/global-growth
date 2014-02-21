@@ -48,11 +48,11 @@
 
 (defn get-indicator-map []
   "Gets map of indicators.
-  /sources/2/indicators:   All world development indicators (about 1300)
-  --- Other possibilities ---
   /topics/16/indicators:   All urban development
+  --- Other possibilities ---
+  /sources/2/indicators:   All world development indicators (about 1300)
   /indicators:             All Indicators (about 8800)"
-  (get-value-map "/sources/2/indicators" {} :name :id))
+  (get-value-map "/topics/16/indicators" {} :name :id))
 
 (def indicator-map (get-indicator-map))
 
@@ -175,7 +175,7 @@
                        (f/drop-down {:class "form-control"} "indicator2" (seq indicator-map))]
                       [:div.form-group.col-md-2
                        (f/label "year" "Year: ")
-                       (f/drop-down {:class "form-control"} "year" (reverse (range 1960 2013)))]]
+                       (f/drop-down {:class "form-control"} "year" (reverse (range 1960 2013)) 2010 )]]
                      (f/submit-button "Submit"))))
 
 (defroutes main-routes
