@@ -1,6 +1,6 @@
-(ns cheap-life.core-test
+(ns global-growth.core-test
   (:require [clojure.test :refer :all]
-            [cheap-life.core :refer :all]))
+            [global-growth.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
