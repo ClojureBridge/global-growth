@@ -6,11 +6,7 @@
   :plugins [[lein-ring "0.8.10"]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [clj-http "0.7.7"]
-                 [cheshire "5.2.0"]
-                 [ring "1.2.1"]
-                 [compojure "1.1.6"]
-                 [hiccup "1.0.4"]]
-  :main ^:skip-aot global-growth.core
-  :ring {:handler global-growth.core/handler}
+                 [cheshire "5.2.0"]]
+  :main global-growth.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
