@@ -6,9 +6,8 @@ A Clojure web app to explore the World Bank's Indicators [API](http://data.world
 ## Usage
 
 Run with:
-    lein ring server 
+    lein run 
 
-Then visit [localhost:3000](http://localhost:3000).
 
 ## License
 
