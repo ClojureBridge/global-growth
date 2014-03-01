@@ -25,7 +25,7 @@
 
 ;; WORLD BANK API CALLS
 (defn get-api
-  "Returns json object representing API response."
+  "Returns map representing API response."
   [path qp]
   (let [base-path (str base-uri path)
         query-params (merge qp {:format "json" :per_page 10000})
