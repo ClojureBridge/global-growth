@@ -44,7 +44,8 @@
   "Returns relation of two keys from API response"
   [path query-params key1 key2]
   (let [response (get-api path query-params)]
-    (into {} (map (fn [x] {(key1 x) (key2 x)}) (:results response)))))
+    (into {} (for [item (:results response)]
+               [(key1 item) (key2 item)]))))
 
 (defn get-indicator-map []
   "Gets map of indicators.
