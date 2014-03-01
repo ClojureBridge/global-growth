@@ -38,7 +38,7 @@
 (defn get-value
   "Returns single value from API response"
   [path query-params key]
-  (get-in (:results (get-api path query-params)) [0 key]))
+  (get-in (get-api path query-params) [:results 0 key]))
 
 (defn get-value-map
   "Returns relation of two keys from API response"
