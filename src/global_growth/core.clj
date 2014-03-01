@@ -123,10 +123,10 @@
 (defn indicator-list
   [indicators]
   (ordered-list
-   (map (fn [country-pair]
-          (let [country (first country-pair)
-                value (second country-pair)]
-            (str country " (" (format-indicator-value value) ")"))) indicators)))
+   (for [country-pair indicators]
+     (let [country (first country-pair)
+           value (second country-pair)]
+       (str country " (" (format-indicator-value value) ")")))))
 
 (defn view-ind
   [indicator1 indicator2 year]
