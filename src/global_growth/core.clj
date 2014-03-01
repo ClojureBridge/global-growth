@@ -111,7 +111,8 @@
 (defn ordered-list
   [coll]
   [:ol
-   (map (fn [list-item] [:li list-item]) coll)])
+   (for [list-item coll]
+     [:li list-item])])
 
 (defn format-indicator-value
   [value]
