@@ -1,7 +1,7 @@
 (ns global-growth.core
-  (:use [compojure.core]
-        [ring.middleware.params])
-  (:require [clojure.set :as set]
+  (:require [compojure.core :refer :all]
+            [ring.middleware.params :refer :all]
+            [clojure.set :as set]
             [clojure.pprint :as pp]
             [clj-http.client :as client]
             [cheshire.core :as json]
