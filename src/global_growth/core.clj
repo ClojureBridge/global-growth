@@ -17,8 +17,8 @@
 ; getting large results as of now.
 
 ;; CONSTANTS
-(def BASE-URI "http://api.worldbank.org")
-(def LIST-SIZE 10)
+(def base-uri "http://api.worldbank.org")
+(def list-size 10)
 
 (defn parse-json [str]
   (json/parse-string str true))
@@ -27,7 +27,7 @@
 (defn get-api
   "Returns json object representing API response."
   [path qp]
-  (let [base-path (str BASE-URI path)
+  (let [base-path (str base-uri path)
         query-params (merge qp {:format "json" :per_page 10000})
         response (parse-json (:body (client/get base-path {:query-params query-params})))
         metadata (first response)
@@ -83,7 +83,7 @@
 (defn sorted-indicator-map
   "Sort the map of indicator numeric values"
   [inds]
-  (take LIST-SIZE
+  (take list-size
         (sort-by val >
                  (into {} (for [[k v] inds
                                 :when (and (not (nil? v))
