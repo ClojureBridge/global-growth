@@ -86,8 +86,7 @@
   (take list-size
         (sort-by val >
                  (into {} (for [[k v] inds
-                                :when (and (not (nil? v))
-                                           (contains? country-ids (:id k)))]
+                                :when (and v (country-ids (:id k)))]
                             [(:value k) (read-string v)])))))
 
 ;; WEB APP
