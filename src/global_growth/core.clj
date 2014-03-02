@@ -50,12 +50,14 @@
   /indicators:             All Indicators (about 8800)"
   (get-value-map "/topics/16/indicators" {} :name :id))
 
+; candidate for provided code
 (defn remove-aggregate-countries
   "Remove all countries that aren't actually countries, but are aggregates."
   [countries]
   (remove (fn [country]
             (= (get-in country [:region :value]) "Aggregates")) countries))
 
+; candidate for provided code
 (defn get-country-ids
   "Get set of country ids so we can filter out aggregate values."
   []
@@ -63,6 +65,8 @@
     (set (map :iso2Code countries))))
 
 (def indicator-map (get-indicator-map))
+
+; candidate for provided code
 (def country-ids (get-country-ids))
 
 (defn get-indicator-all
@@ -87,6 +91,7 @@
 
 ;; WEB APP
 
+; candidate for provided code - FILL IN THE BLANK
 (defn layout
   [title & content]
   (page/html5
@@ -103,18 +108,21 @@
     [:div.container
      content]]))
 
+; candidate for provided code
 (defn ordered-list
   [coll]
   [:ol
    (for [list-item coll]
      [:li list-item])])
 
+; candidate for provided code
 (defn format-indicator-value
   [value]
   (if (number? value)
     (format "%,.2f" (float value))
     (str value)))
 
+; candidate for provided code
 (defn indicator-list
   [indicators]
   (ordered-list
@@ -123,6 +131,7 @@
            value (second country-pair)]
        (str country " (" (format-indicator-value value) ")")))))
 
+; candidate for provided code - FILL IN THE BLANK
 (defn view-ind
   [indicator1 indicator2 year]
   (let [inds1 (sorted-indicator-map
@@ -144,6 +153,7 @@
               [:p "No indicator values for this year."]
               (indicator-list inds2))]])))
 
+; candidate for provided code - FILL IN THE BLANK
 (defn main-page []
   (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
@@ -161,10 +171,12 @@
                        (f/drop-down {:class "form-control"} "year" (reverse (range 1960 2013)) 2010 )]]
                      (f/submit-button "Submit"))))
 
+; candidate for provided code - FILL IN THE BLANK
 (defroutes main-routes
   (GET "/" [] (main-page))
   (GET "/choose-ind" [indicator1 indicator2 year]
         (view-ind indicator1 indicator2 year)))
 
+; candidate for provided code
 (def handler (wrap-params main-routes))
 
