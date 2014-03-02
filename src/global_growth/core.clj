@@ -35,11 +35,6 @@
     {:metadata metadata
      :results results}))
 
-(defn get-value
-  "Returns single value from API response"
-  [path query-params key]
-  (get-in (get-api path query-params) [:results 0 key]))
-
 (defn get-value-map
   "Returns relation of two keys from API response"
   [path query-params key1 key2]
