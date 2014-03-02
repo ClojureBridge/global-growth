@@ -1,7 +1,7 @@
 (ns global-growth.core
-  (:use [compojure.core]
-        [ring.middleware.params])
-  (:require [clojure.set :as set]
+  (:require [compojure.core :refer :all]
+            [ring.middleware.params :refer :all]
+            [clojure.set :as set]
             [clojure.pprint :as pp]
             [clj-http.client :as client]
             [cheshire.core :as json]
@@ -17,17 +17,17 @@
 ; getting large results as of now.
 
 ;; CONSTANTS
-(def BASE-URI "http://api.worldbank.org")
-(def LIST-SIZE 10)
+(def base-uri "http://api.worldbank.org")
+(def list-size 10)
 
 (defn parse-json [str]
   (json/parse-string str true))
 
 ;; WORLD BANK API CALLS
 (defn get-api
-  "Returns json object representing API response."
+  "Returns map representing API response."
   [path qp]
-  (let [base-path (str BASE-URI path)
+  (let [base-path (str base-uri path)
         query-params (merge qp {:format "json" :per_page 10000})
         response (parse-json (:body (client/get base-path {:query-params query-params})))
         metadata (first response)
@@ -38,13 +38,14 @@
 (defn get-value
   "Returns single value from API response"
   [path query-params key]
-  (get-in (:results (get-api path query-params)) [0 key]))
+  (get-in (get-api path query-params) [:results 0 key]))
 
 (defn get-value-map
   "Returns relation of two keys from API response"
   [path query-params key1 key2]
   (let [response (get-api path query-params)]
-    (into {} (map (fn [x] {(key1 x) (key2 x)}) (:results response)))))
+    (into {} (for [item (:results response)]
+               [(key1 item) (key2 item)]))))
 
 (defn get-indicator-map []
   "Gets map of indicators.
@@ -83,11 +84,10 @@
 (defn sorted-indicator-map
   "Sort the map of indicator numeric values"
   [inds]
-  (take LIST-SIZE
+  (take list-size
         (sort-by val >
                  (into {} (for [[k v] inds
-                                :when (and (not (nil? v))
-                                           (contains? country-ids (:id k)))]
+                                :when (and v (country-ids (:id k)))]
                             [(:value k) (read-string v)])))))
 
 ;; WEB APP
@@ -111,7 +111,8 @@
 (defn ordered-list
   [coll]
   [:ol
-   (map (fn [list-item] [:li list-item]) coll)])
+   (for [list-item coll]
+     [:li list-item])])
 
 (defn format-indicator-value
   [value]
@@ -122,10 +123,10 @@
 (defn indicator-list
   [indicators]
   (ordered-list
-   (map (fn [country-pair]
-          (let [country (first country-pair)
-                value (second country-pair)]
-            (str country " (" (format-indicator-value value) ")"))) indicators)))
+   (for [country-pair indicators]
+     (let [country (first country-pair)
+           value (second country-pair)]
+       (str country " (" (format-indicator-value value) ")")))))
 
 (defn view-ind
   [indicator1 indicator2 year]
