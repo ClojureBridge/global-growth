@@ -5,7 +5,7 @@ A Clojure web app to explore the World Bank's Indicators [API](http://data.world
 
 ## Usage
 
-Fill in missing function definitions, then make appropriate function calls where you find <<FILL IN THE BLANK>>.
+Fill in missing function definitions, then make appropriate function calls where you find &lt;&lt;FILL IN THE BLANK&gt;&gt;.
 
 Run with:
 
