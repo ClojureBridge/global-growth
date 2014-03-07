@@ -68,10 +68,10 @@
 
 (defn view-ind
   [indicator1 indicator2 year]
-  (let [inds1 (sorted-indicator-map
-                (<<FILL IN THE BLANK>>))
-        inds2 (sorted-indicator-map
-                (<<FILL IN THE BLANK>>))]
+  (let [inds1 (<<FILL IN THE BLANK>>)
+                
+        inds2 (<<FILL IN THE BLANK>>)]
+                
   (layout "Sorted Indicators"
           [:h1 "Sorted Indicators"]
           [:div.row
