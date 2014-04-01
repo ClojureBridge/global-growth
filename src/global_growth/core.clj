@@ -122,7 +122,7 @@
            value (second country-pair)]
        (str country " (" (format-indicator-value value) ")")))))
 
-(defn view-ind
+(defn view-indicators
   [indicator1 indicator2 year]
   (let [inds1 (sorted-indicator-map
                 (get-indicator-all indicator1 year :country :value))
@@ -147,7 +147,7 @@
   (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
           [:p "Choose one of these world development indicators."]
-          (form/form-to {:role "form"} [:get "/choose-ind"]
+          (form/form-to {:role "form"} [:get "/indicators"]
                      [:div.row
                       [:div.form-group.col-md-5
                        (form/label "indicator1" "Indicator 1:  ")
@@ -162,8 +162,8 @@
 
 (defroutes main-routes
   (GET "/" [] (main-page))
-  (GET "/choose-ind" [indicator1 indicator2 year]
-        (view-ind indicator1 indicator2 year)))
+  (GET "/indicators" [indicator1 indicator2 year]
+        (view-indicators indicator1 indicator2 year)))
 
 (def handler (wrap-params main-routes))
 
