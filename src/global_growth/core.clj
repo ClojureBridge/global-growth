@@ -7,7 +7,7 @@
             [ring.adapter.jetty :as jetty]
             [hiccup.core :as hiccup]
             [hiccup.page :as page]
-            [hiccup.form :as f]))
+            [hiccup.form :as form]))
 
 ;TODO: handle paging: right now just getting a large value
 ; for 'per_page' parameter.
@@ -132,13 +132,13 @@
           [:h1 "Sorted Indicators"]
           [:div.row
            [:div.form-group.col-md-6
-            (f/label indicator1 (get (set/map-invert indicator-map) indicator1))
+            (form/label indicator1 (get (set/map-invert indicator-map) indicator1))
             (if (empty? inds1)
               [:p "No indicator values for this year."]
               (indicator-list inds1))
             ]
            [:div.form-group.col-md-6
-            (f/label indicator2 (get (set/map-invert indicator-map) indicator2))
+            (form/label indicator2 (get (set/map-invert indicator-map) indicator2))
             (if (empty? inds2)
               [:p "No indicator values for this year."]
               (indicator-list inds2))]])))
@@ -147,18 +147,18 @@
   (layout "World Bank Indicators"
           [:h1 "World Bank Indicators"]
           [:p "Choose one of these world development indicators."]
-          (f/form-to {:role "form"} [:get "/choose-ind"]
+          (form/form-to {:role "form"} [:get "/choose-ind"]
                      [:div.row
                       [:div.form-group.col-md-5
-                       (f/label "indicator1" "Indicator 1:  ")
-                       (f/drop-down {:class "form-control"} "indicator1" (seq indicator-map))]
+                       (form/label "indicator1" "Indicator 1:  ")
+                       (form/drop-down {:class "form-control"} "indicator1" (seq indicator-map))]
                       [:div.form-group.col-md-5
-                       (f/label "indicator2" "Indicator 2:  ")
-                       (f/drop-down {:class "form-control"} "indicator2" (seq indicator-map))]
+                       (form/label "indicator2" "Indicator 2:  ")
+                       (form/drop-down {:class "form-control"} "indicator2" (seq indicator-map))]
                       [:div.form-group.col-md-2
-                       (f/label "year" "Year: ")
-                       (f/drop-down {:class "form-control"} "year" (reverse (range 1960 2013)) 2010 )]]
-                     (f/submit-button "Submit"))))
+                       (form/label "year" "Year: ")
+                       (form/drop-down {:class "form-control"} "year" (reverse (range 1960 2013)) 2010 )]]
+                     (form/submit-button "Submit"))))
 
 (defroutes main-routes
   (GET "/" [] (main-page))
