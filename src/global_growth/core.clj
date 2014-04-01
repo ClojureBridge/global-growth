@@ -2,7 +2,6 @@
   (:require [compojure.core :refer :all]
             [ring.middleware.params :refer :all]
             [clojure.set :as set]
-            [clojure.pprint :as pp]
             [clj-http.client :as client]
             [cheshire.core :as json]
             [ring.adapter.jetty :as jetty]
