@@ -11,6 +11,6 @@
                  [compojure "1.1.6"]
                  [hiccup "1.0.4"]]
   :main ^:skip-aot global-growth.core
-  :ring {:handler global-growth.core/handler}
+  :ring {:handler global-growth.web/handler}
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
