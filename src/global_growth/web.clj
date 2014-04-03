@@ -1,16 +1,10 @@
 (ns global-growth.web
-  (:require [global-growth.core :as global-growth]
+  (:require [global-growth.core :as api]
             [compojure.core :refer [defroutes GET]]
             [compojure.handler :refer [site]]
             [hiccup.core :as hiccup]
             [hiccup.page :as page]
             [hiccup.form :as form]))
-
-; TODO: handle paging: right now just getting a large value
-; for 'per_page' parameter.
-; Maybe that is fine for simplicity. But that could be a
-; problem if we get things with large result sets. Not
-; getting large results as of now.
 
 ;; WEB APP
 
@@ -52,12 +46,14 @@
 
 (defn view-indicators
   [indicator1 indicator2 year]
-  (let [inds1 (global-growth/get-indicator-values indicator1 year)
-        inds2 (global-growth/get-indicator-values indicator2 year)
+  (let [inds1 (api/take-top-values
+               (api/get-indicator-values indicator1 year) 10)
+        inds2 (api/take-top-values
+               (api/get-indicator-values indicator2 year) 10)
         indicator-map (into {}
                             (map (fn [indicator]
                                    [(second indicator) (first indicator)])
-                                 (global-growth/get-indicators)))]
+                                 (api/get-indicators)))]
   (layout "Sorted Indicators"
           [:h1 "Sorted Indicators"]
           [:div.row
@@ -83,12 +79,12 @@
                        (form/label "indicator1" "Indicator 1:  ")
                        (form/drop-down {:class "form-control"}
                                        "indicator1"
-                                       (global-growth/get-indicators))]
+                                       (api/get-indicators))]
                       [:div.form-group.col-md-5
                        (form/label "indicator2" "Indicator 2:  ")
                        (form/drop-down {:class "form-control"}
                                        "indicator2"
-                                       (global-growth/get-indicators))]
+                                       (api/get-indicators))]
                       [:div.form-group.col-md-2
                        (form/label "year" "Year: ")
                        (form/drop-down {:class "form-control"}
