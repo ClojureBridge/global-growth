@@ -1,6 +1,6 @@
-(ns global-growth.core-test
+(ns {{namespace}}.core-test
   (:require [clojure.test :refer :all]
-            [global-growth.core :refer :all]))
+            [{{namespace}}.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

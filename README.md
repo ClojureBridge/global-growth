@@ -1,17 +1,14 @@
-# global-growth 
+# clojurebridge
 
-A Clojure web app to explore the World Bank's Indicators [API](http://data.worldbank.org/)
-
+A Leiningen template for FIXME.
 
 ## Usage
 
-Run with:
-    lein ring server 
-
-Then visit [localhost:3000](http://localhost:3000).
+FIXME
 
 ## License
 
-Copyright © 2013 ClojureBridge 
+Copyright © 2014 FIXME
 
-Distributed under the Creative Commons Attribution 3.0 Unported [License](http://creativecommons.org/licenses/by/3.0/)
+Distributed under the Eclipse Public License either version 1.0 or (at
+your option) any later version.

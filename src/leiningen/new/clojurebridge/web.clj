@@ -1,5 +1,5 @@
-(ns global-growth.web
-  (:require [global-growth.core :as api]
+(ns {{namespace}}.web
+  (:require [{{namespace}}.core :as api]
             [compojure.core :refer [defroutes GET]]
             [compojure.handler :refer [site]]
             [hiccup.core :as hiccup]

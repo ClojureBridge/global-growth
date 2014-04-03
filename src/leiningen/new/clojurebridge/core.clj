@@ -1,4 +1,4 @@
-(ns global-growth.core
+(ns {{namespace}}.core
   (:require [clj-http.client :as client]
             [cheshire.core :as json]))
 
