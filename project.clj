@@ -10,6 +10,7 @@
                  [ring "1.2.1"]
                  [compojure "1.1.6"]
                  [hiccup "1.0.4"]]
+  :min-lein-version "2.0.0"
   :main ^:skip-aot global-growth.core
   :ring {:handler global-growth.web/handler}
   :target-path "target/%s"
